@@ -29,8 +29,23 @@ class NoteManager:
             json.dump([note.__dict__ for note in self.notes], file)
             
     def sort_notes_by_data(self):
-        self.notes.sort(key=lambda x: datetime.strptime(x.timestamp, "%Y-%m-%d %H:%M:%S"), reverse=True)
-        
+        self.notes.sort(key=lambda x: datetime.strptime(x.timestamp, "%Y-%m-%d %H:%M:%S"), reverse=True)    
+    
+    def get_notes_by_date(self, day, month, year):
+        selected_notes = []
+        for note in self.notes:
+            note_date = datetime.strptime(note.timestamp, "%Y-%m-%d %H:%M:%S")
+            if note_date.day == day and note_date.month == month and note_date.year == year:
+                selected_notes.append(note)
+        return selected_notes
+
+    def get_notes_by_id(self, note_id):
+        for note in self.notes:
+            if note.note_id == note_id:
+                print(f"ID: {note.note_id}, Title: {note.title}, Body: {note.body}, Timestamp: {note.timestamp}")
+                return
+        print("The note not found.")
+    
     def list_notes(self):
         self.sort_notes_by_data()
         if self.notes:
@@ -63,7 +78,6 @@ class NoteManager:
         if not self.notes:
             print("The note list is empty.")
             return
-        
         note_id = int(input("Enter note ID to delete: "))
         note_ids = [note.note_id for note in self.notes]
         if note_id not in note_ids:
@@ -81,8 +95,10 @@ def main():
         print("\n1. List notes")
         print("2. Add note")
         print("3. Edit note")
-        print("4. Delete note")
-        print("5. Exit")
+        print("4. Get note by date")
+        print("5. Get note by ID")
+        print("6. Delete note")
+        print("7. Exit")
         
         choice = input("input your choise: ")
             
@@ -96,8 +112,16 @@ def main():
             note_id = int(input("Enter note ID to edit: "))
             note_manager.edit_note(note_id)
         elif choice == "4":
-            note_manager.delete_note()
+            year = int(input("Enter the year: "))
+            month = int(input("Enter the month: "))
+            day = int(input("Enter the day: "))
+            note_manager.get_notes_by_date(day, month, year)
         elif choice == "5":
+            note_id = int(input("Enter note ID: "))
+            note_manager.get_notes_by_id(note_id)
+        elif choice == "6":
+            note_manager.delete_note()
+        elif choice == "7":
             break
         else:
             print("Invalid choice. Please try again.")
